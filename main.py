@@ -7,7 +7,8 @@ if __name__ == "__main__":
     Run(
         conf['start_ts'],
         conf['end_ts'],
-        conf['step'])
+        conf['step'],
+        conf['source_data'])
     Analyse()
 
 

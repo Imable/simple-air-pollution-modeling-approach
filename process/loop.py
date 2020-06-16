@@ -13,15 +13,16 @@ class Loop:
         print(f'Total iterations: { self.iterations }')
 
     def start(self):
-        for cur_ts in self.timeframe():
+        for i, cur_ts in self.timeframe():
+            print(f'Iteration {i} - {cur_ts}')
             self.func(cur_ts)
     
     def timeframe(self):
         for iteration in range(self.iterations):
             elapsed = iteration * self.step
-            yield self.start_ts + timedelta(minutes=elapsed)
+            yield iteration, self.start_ts + elapsed
 
     def num_iter(self):
         duration = self.end_ts - self.start_ts
-        return int(duration / timedelta(minutes=self.step))
+        return int(duration / self.step)
     

@@ -1,5 +1,5 @@
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 
 ARGUMENTS = {
     'start_ts': {
@@ -14,7 +14,7 @@ ARGUMENTS = {
     },
     'step': {
         'help': 'Step size for the model interval in minutes (M)',
-        'parse': (lambda x: int(x)),
+        'parse': (lambda x: timedelta(minutes=int(x))),
         'default': '60'
     },
     'raster': {
@@ -26,6 +26,11 @@ ARGUMENTS = {
         'help': 'Inversion layer height in meters (m)',
         'parse': (lambda x: int(x)),
         'default': 'No inversion layer height provided'
+    },
+    'source_data': {
+        'help': 'Filepath of the .xlsx file containing source data',
+        'parse': (lambda x: x),
+        'default': 'No source data provided'
     }
     # 'validation_data': 'Filepath of a file including own measured concentration data in CSV format',
     # 'source_data': 'Filepath of a file including data of pollution sources',
