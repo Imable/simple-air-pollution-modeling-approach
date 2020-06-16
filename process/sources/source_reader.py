@@ -38,8 +38,8 @@ class SourceReader:
         df = df.dropna(subset=['ETD'])
 
         # Add the date to times in order to cope with a timestep bigger than 1 day
-        df['ETA'] = df.apply(lambda r : pandas.datetime.combine(r['DATE'], r['ETA'].time()), 1)
-        df['ETD'] = df.apply(lambda r : pandas.datetime.combine(r['DATE'], r['ETD'].time()), 1)
+        df['ETA'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETA'].time()), 1)
+        df['ETD'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETD'].time()), 1)
 
         # Guarantee sorting on date column
         df = df.sort_values(by=['DATE'])
@@ -86,10 +86,10 @@ class SourceReader:
                         cur_row.SHIP.item())
                 )
             
-            self.__print_alterations(added, removed)
-
             local_pointer += 1
             cur_row = self.__get_row_at(local_pointer)
+        
+        self.__print_alterations(added, removed)
         
         return added, removed
     

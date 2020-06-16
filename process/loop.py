@@ -15,7 +15,7 @@ class Loop:
     def start(self):
         for i, cur_ts in self.timeframe():
             print(f'Iteration {i} - {cur_ts}')
-            self.func(cur_ts)
+            self.func(cur_ts, self.step)
     
     def timeframe(self):
         for iteration in range(self.iterations):

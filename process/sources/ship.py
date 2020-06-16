@@ -3,10 +3,10 @@ from .base_source import BaseSource
 class Ship(BaseSource):
 
     def add(self):
-        self.emissions += 10
+        return 10
 
-    def idle(self):
-        pass
+    def idle(self, step):
+        return 0.1 * (step.total_seconds() / 60)
 
     def remove(self):
-        pass
+        return 10

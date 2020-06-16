@@ -19,9 +19,14 @@ class Run:
     def __fetch_new_sources(self, cur_ts):
         added, removed = self.source_data.update_sources(cur_ts)
         self.active_sources = [source for source in self.active_sources + added if source not in removed]
-    
-    def iteration(self, cur_ts):
+
+    def __combine_emissions(self, cur_ts, step):
+        for source in self.active_sources:
+            source.emit(step)
+
+    def iteration(self, cur_ts, step):
         self.__fetch_new_sources(cur_ts)
+        self.__combine_emissions(cur_ts, step)
         # print(self.active_sources)
 
 
