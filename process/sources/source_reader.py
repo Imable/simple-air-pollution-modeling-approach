@@ -48,6 +48,8 @@ class SourceReader:
         new_total_rows = len(df.index)
         omitted_rows = new_total_rows - total_rows
         print(f'Omitted { -omitted_rows } rows due to unparsable dates and times. (= {round(omitted_rows / total_rows * 100, 2)}%)')
+        print('____________________________________')
+        print('')
 
         return df
     
@@ -61,7 +63,7 @@ class SourceReader:
     def __get_row_at(self, position):
         return self.data.iloc[[position]]
     
-    def __get_altered_sources(self, cur_ts, cur_date, cur_step_end):
+    def __get_altered_sources(self, cur_ts, cur_date, cur_step_end, debug):
         local_pointer = self.pointer
 
         added, removed = [], []
@@ -76,20 +78,25 @@ class SourceReader:
                 # Source became active in this step
                 added.append(
                     Ship(
-                        cur_row.SHIP.item())
+                        cur_row.SHIP.item(),
+                        debug
+                    )
                 )
                     
             if cur_row.ETD.item() >= cur_ts and cur_row.ETD.item() < cur_step_end:
                 # Source stopped being active this step
                 removed.append(
                     Ship(
-                        cur_row.SHIP.item())
+                        cur_row.SHIP.item(),
+                        debug
+                    )
                 )
             
             local_pointer += 1
             cur_row = self.__get_row_at(local_pointer)
         
-        self.__print_alterations(added, removed)
+        if debug:
+            self.__print_alterations(added, removed)
         
         return added, removed
     
@@ -104,7 +111,7 @@ class SourceReader:
         __print_list('removed', removed)
 
     
-    def update_sources(self, cur_ts):
+    def update_sources(self, cur_ts, debug):
         cur_date, cur_step_end = cur_ts.date(), cur_ts + self.step
 
         # Move the pointer to the first entry starting with `cur_date`
@@ -113,5 +120,6 @@ class SourceReader:
         return self.__get_altered_sources(
             cur_ts,
             cur_date,
-            cur_step_end
+            cur_step_end,
+            debug
         )  

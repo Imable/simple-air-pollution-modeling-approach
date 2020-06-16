@@ -1,9 +1,10 @@
 class BaseSource:
-    def __init__(self, name):
+    def __init__(self, name, debug=False):
+        self.debug     = debug
+
         self.name      = name
         self.added     = True
         self.removed   = False
-        self.emissions = 0
 
     def __eq__(self, other):
         return self.name == other.name
@@ -12,21 +13,24 @@ class BaseSource:
         '''
         Function that returns the emissions of the source for this timestep
         '''
-        new_emissions = 0
+        emissions = 0
 
+        # If the source has been added, add the addition penalty
         if self.added:
-            new_emissions += self.add()
+            emissions += self.add()
             self.added = False
 
+        # If the source has been removed, add the removal penalty and stop
         if self.removed:
-            new_emissions += self.remove()
-            self.removed = True
-        
-        new_emissions += self.idle(step)
+            emissions += self.remove()
+        # Otherwise add the idle emissions
+        else:
+            emissions += self.idle(step)
 
-        self.emissions += new_emissions
-        print(f'{self.name} emitted {new_emissions}')
-        return self.emissions
+        if self.debug:
+            print(f'{self.name} emitted {emissions}')
+
+        return emissions
 
     def add(self):
         pass

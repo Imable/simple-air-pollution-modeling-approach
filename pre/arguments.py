@@ -31,6 +31,11 @@ ARGUMENTS = {
         'help': 'Filepath of the .xlsx file containing source data',
         'parse': (lambda x: x),
         'default': 'No source data provided'
+    },
+    'debug': {
+        'help': 'Show debug messages (will be slower)',
+        'parse': (lambda x: bool(x)),
+        'default': 0
     }
     # 'validation_data': 'Filepath of a file including own measured concentration data in CSV format',
     # 'source_data': 'Filepath of a file including data of pollution sources',
