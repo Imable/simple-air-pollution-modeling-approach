@@ -3,6 +3,9 @@ class BaseSource:
         self.name      = name
         self.emissions = 0
 
+    def __eq__(self, other):
+        return self.name == other.name
+
     def add(self):
         pass
 

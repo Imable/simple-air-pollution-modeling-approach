@@ -86,16 +86,23 @@ class SourceReader:
                         cur_row.SHIP.item())
                 )
             
+            self.__print_alterations(added, removed)
+
             local_pointer += 1
             cur_row = self.__get_row_at(local_pointer)
         
-        num_added, num_removed = len(added), len(removed)
-        if num_added > 0:
-            print(f'{num_added} sources added: {added}')
-        if num_removed > 0:
-            print(f'{num_removed} sources removed: {removed}')
-
         return added, removed
+    
+    def __print_alterations(self, added, removed):
+        def __print_list(name, lst):
+            num = len(lst)
+            if num > 0:
+                print(f"{num} sources {name}: {', '.join([source.name for source in lst])}")
+
+        num_added, num_removed = len(added), len(removed)
+        __print_list('added', added)
+        __print_list('removed', removed)
+
     
     def update_sources(self, cur_ts):
         cur_date, cur_step_end = cur_ts.date(), cur_ts + self.step
