@@ -2,12 +2,16 @@ from .loop import Loop
 from .sources.source_reader import SourceReader
 from .results.result_writer import ResultWriter
 
-class Run:
+class Model:
     def __init__(self, 
                 start_ts, end_ts, step,
                 source_data,
                 debug):
-        self.debug = debug
+        self.debug    = debug
+
+        self.start_ts = start_ts
+        self.end_ts   = end_ts
+        self.step     = step
 
         self.source_data = SourceReader(
             source_data, 
@@ -17,11 +21,6 @@ class Run:
 
         self.results = ResultWriter()
         
-        loop = Loop(start_ts, end_ts, step, self.iteration, debug)
-        loop.start()
-
-        self.results.show_results()
-
     def __remove_old_sources(self):
         # Only keep sources that have not been removed
         self.active_sources = [source for source in self.active_sources if not source.removed]
@@ -45,6 +44,18 @@ class Run:
             emissions += source.emit(step)
         
         return emissions
+    
+    def run(self):
+        loop = Loop(
+            self.start_ts, 
+            self.end_ts, 
+            self.step, 
+            self.iteration, 
+            self.debug
+        )
+        loop.start()
+
+        return self.results.get()
 
     def iteration(self, cur_ts, step):
         self.__remove_old_sources()
