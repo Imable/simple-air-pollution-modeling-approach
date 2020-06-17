@@ -12,7 +12,13 @@ if __name__ == "__main__":
         conf['source_data'],
         conf['debug']).run()
 
-    Analyse(res)
+    Analyse(
+        res,
+        conf['start_ts'],
+        conf['end_ts'],
+        conf['step'],
+        conf['measurements_data']
+    )
 
 
     

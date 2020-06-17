@@ -15,7 +15,8 @@ class Reader:
         self.data = pandas.read_excel(self.__get_path(fname), header=header_rows)
         self.data = self.parse_and_clean(self.data)
         # Remove the rows that precede the timeframe
-        self.data = self.data[self.data['DATE'] >= start_ts]
+        mask      = (self.data['DATE'] >= start_ts) & (self.data['DATE'] <= end_ts)
+        self.data = self.data.loc[mask]
     
     def __get_path(self, fname):
         return f'{ BASE_PATH }/{ fname }'

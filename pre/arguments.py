@@ -25,12 +25,17 @@ ARGUMENTS = {
     'inversion_layer': {
         'help': 'Inversion layer height in meters (m)',
         'parse': (lambda x: int(x)),
-        'default': 'No inversion layer height provided'
+        'default': 500
     },
     'source_data': {
         'help': 'Filepath of the .xlsx file containing source data',
         'parse': (lambda x: x),
-        'default': 'No source data provided'
+        'default': None
+    },
+    'measurements_data': {
+        'help': 'Filepath for the .xlsx file containing your own measurements',
+        'parse': (lambda x: x),
+        'default': None
     },
     'debug': {
         'help': 'Show debug messages (will be slower)',
