@@ -3,11 +3,11 @@ from .base_source import BaseSource
 class Ship(BaseSource):
 
     def add(self):
-        return 10
+        return 0.02
 
     def idle(self, step):
         # Addition per minute
-        return 0.1 * (step.total_seconds() / 60)
+        return 0.001 * (step.total_seconds() / 60)
 
     def remove(self):
-        return 10
+        return 0.02
