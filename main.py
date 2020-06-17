@@ -10,6 +10,7 @@ if __name__ == "__main__":
         conf['end_ts'],
         conf['step'],
         conf['source_data'],
+        conf['pm_type'],
         conf['debug']).run()
 
     Analyse(
@@ -17,7 +18,9 @@ if __name__ == "__main__":
         conf['start_ts'],
         conf['end_ts'],
         conf['step'],
-        conf['measurements_data']
+        conf['measurements_data'],
+        conf['pm_type'],
+        conf['station']
     )
 
 

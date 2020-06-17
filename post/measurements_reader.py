@@ -7,6 +7,12 @@ sys.path.append("..")
 from base.reader import Reader
 
 class MeasurementsReader(Reader):
+    def __init__(self, 
+        pm_type, station,
+        *args, **kwargs):
+        self.columns = [f'{s}_{pm_type}' for s in station]
+        
+        super().__init__(*args, **kwargs)
 
     def parse_and_clean(self, df):
         '''
@@ -19,32 +25,7 @@ class MeasurementsReader(Reader):
         # Drop the rows that do not have a valid date or time
         df = df.dropna(subset=['DATE'])
 
+        # Only select relevant columns
+        df = df[['DATE'] + self.columns]
+
         return df
-        
-        # total_rows = len(df.index)
-
-        # # Parse the date and time columns to the datetime format
-        # df['DATE'] = pandas.to_datetime(df['DATE'], errors='coerce')
-        # df['ETA']  = pandas.to_datetime(df['ETA'], format='%H:%M', errors='coerce')
-        # df['ETD']  = pandas.to_datetime(df['ETD'], format='%H:%M', errors='coerce')
-    
-        # # Drop the rows that do not have a valid date or time
-        # df = df.dropna(subset=['DATE'])
-        # df = df.dropna(subset=['ETA'])
-        # df = df.dropna(subset=['ETD'])
-
-        # # Add the date to times in order to cope with a timestep bigger than 1 day
-        # df['ETA'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETA'].time()), 1)
-        # df['ETD'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETD'].time()), 1)
-
-        # # Guarantee sorting on date column
-        # df = df.sort_values(by=['DATE'])
-        
-        # # Count omitted rows
-        # new_total_rows = len(df.index)
-        # omitted_rows = new_total_rows - total_rows
-        # print(f'Omitted { -omitted_rows } rows due to unparsable dates and times. (= {round(omitted_rows / total_rows * 100, 2)}%)')
-        # print('____________________________________')
-        # print('')
-
-        # return df

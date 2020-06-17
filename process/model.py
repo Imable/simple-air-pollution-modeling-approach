@@ -6,6 +6,7 @@ class Model:
     def __init__(self, 
                 start_ts, end_ts, step,
                 source_data,
+                pm_type,
                 debug):
         self.debug    = debug
 
@@ -21,7 +22,7 @@ class Model:
 
         self.active_sources = []
 
-        self.results = ResultWriter()
+        self.results = ResultWriter(pm_type)
         
     def __remove_old_sources(self):
         # Only keep sources that have not been removed

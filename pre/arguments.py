@@ -1,4 +1,5 @@
 import argparse
+import json
 from datetime import datetime, timedelta
 
 ARGUMENTS = {
@@ -36,6 +37,16 @@ ARGUMENTS = {
         'help': 'Filepath for the .xlsx file containing your own measurements',
         'parse': (lambda x: x),
         'default': None
+    },
+    'pm_type': {
+        'help': 'Type of PM that will be modelled',
+        'parse': (lambda x: x),
+        'default': 'PM1'
+    },
+    'station': {
+        'help': 'Station of which the measurements will be plotted (G/C/D). Enter as: \'[\\"C\\", \\"D\\"]\'',
+        'parse': (lambda x: json.loads(x)),
+        'default': '["G"]'
     },
     'debug': {
         'help': 'Show debug messages (will be slower)',
