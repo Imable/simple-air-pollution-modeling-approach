@@ -1,27 +1,70 @@
 import pandas
 from datetime import datetime
+# Hacky way to import from the `base` folder in the root of the project
+import sys
+sys.path.append("...")
 
+from base.reader import Reader
 from .ship import Ship
 
-BASE_PATH = './input'
+class SourceReader(Reader):
 
-class SourceReader:
-    def __init__(self, fname, 
-            start_ts, step):
+    def __init__(self, *args, **kwargs):
+        self.pointer = 0
+        super().__init__(*args, **kwargs)
+      
+    def __set_pointer(self, cur_date):
+        while self.get_row_at(self.pointer).DATE.dt.date.item() < cur_date:
+            self.pointer += 1
+    
+    def __get_altered_sources(self, cur_ts, cur_date, cur_step_end, debug):
+        local_pointer = self.pointer
 
-        self.start_ts = start_ts
-        self.step     = step
-        self.data     = pandas.read_excel(self.__get_path(fname), header=1)
+        added, removed = [], []
 
-        # Row pointer that keeps track of the ships that have left the harbor
-        self.pointer        = 0
+        # Start at the first row with the date of `cur_date`
+        cur_row = self.get_row_at(local_pointer)
 
-        self.data = self.__parse_and_clean(self.data)
+        # Find the next rows that have the same date as `cur_date`
+        while cur_row.DATE.dt.date.item() <= cur_date:
 
-        # Remove the rows that precede the timeframe
-        self.data = self.data[self.data['DATE'] >= start_ts]
+            if cur_row.ETA.item() >= cur_ts and cur_row.ETA.item() < cur_step_end:
+                # Source became active in this step
+                added.append(
+                    Ship(
+                        cur_row.SHIP.item(),
+                        debug
+                    )
+                )
+                    
+            if cur_row.ETD.item() >= cur_ts and cur_row.ETD.item() < cur_step_end:
+                # Source stopped being active this step
+                removed.append(
+                    Ship(
+                        cur_row.SHIP.item(),
+                        debug
+                    )
+                )
+            
+            local_pointer += 1
+            cur_row = self.get_row_at(local_pointer)
+        
+        if debug:
+            self.__print_alterations(added, removed)
+        
+        return added, removed
+    
+    def __print_alterations(self, added, removed):
+        def __print_list(name, lst):
+            num = len(lst)
+            if num > 0:
+                print(f"{num} sources {name}: {', '.join([source.name for source in lst])}")
 
-    def __parse_and_clean(self, df):
+        num_added, num_removed = len(added), len(removed)
+        __print_list('added', added)
+        __print_list('removed', removed)
+
+    def parse_and_clean(self, df):
         '''
         Convert used times and dates to their respective formats and remove the rows that do not comply with specific types and formats.
         '''
@@ -52,65 +95,7 @@ class SourceReader:
         print('')
 
         return df
-    
-    def __get_path(self, fname):
-        return f'{ BASE_PATH }/{ fname }'
-    
-    def __set_pointer(self, cur_date):
-        while self.__get_row_at(self.pointer).DATE.dt.date.item() < cur_date:
-            self.pointer += 1
-    
-    def __get_row_at(self, position):
-        return self.data.iloc[[position]]
-    
-    def __get_altered_sources(self, cur_ts, cur_date, cur_step_end, debug):
-        local_pointer = self.pointer
 
-        added, removed = [], []
-
-        # Start at the first row with the date of `cur_date`
-        cur_row = self.__get_row_at(local_pointer)
-
-        # Find the next rows that have the same date as `cur_date`
-        while cur_row.DATE.dt.date.item() <= cur_date:
-
-            if cur_row.ETA.item() >= cur_ts and cur_row.ETA.item() < cur_step_end:
-                # Source became active in this step
-                added.append(
-                    Ship(
-                        cur_row.SHIP.item(),
-                        debug
-                    )
-                )
-                    
-            if cur_row.ETD.item() >= cur_ts and cur_row.ETD.item() < cur_step_end:
-                # Source stopped being active this step
-                removed.append(
-                    Ship(
-                        cur_row.SHIP.item(),
-                        debug
-                    )
-                )
-            
-            local_pointer += 1
-            cur_row = self.__get_row_at(local_pointer)
-        
-        if debug:
-            self.__print_alterations(added, removed)
-        
-        return added, removed
-    
-    def __print_alterations(self, added, removed):
-        def __print_list(name, lst):
-            num = len(lst)
-            if num > 0:
-                print(f"{num} sources {name}: {', '.join([source.name for source in lst])}")
-
-        num_added, num_removed = len(added), len(removed)
-        __print_list('added', added)
-        __print_list('removed', removed)
-
-    
     def update_sources(self, cur_ts, debug):
         cur_date, cur_step_end = cur_ts.date(), cur_ts + self.step
 

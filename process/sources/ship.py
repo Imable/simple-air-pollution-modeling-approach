@@ -6,6 +6,7 @@ class Ship(BaseSource):
         return 10
 
     def idle(self, step):
+        # Addition per minute
         return 0.1 * (step.total_seconds() / 60)
 
     def remove(self):

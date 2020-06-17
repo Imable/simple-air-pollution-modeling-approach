@@ -15,7 +15,9 @@ class Model:
 
         self.source_data = SourceReader(
             source_data, 
-            start_ts, step)
+            start_ts, end_ts, step, 
+            1
+        )
 
         self.active_sources = []
 
