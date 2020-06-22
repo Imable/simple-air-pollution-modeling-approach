@@ -2,10 +2,10 @@ import pandas
 from datetime import datetime
 # Hacky way to import from the `base` folder in the root of the project
 import sys
-sys.path.append("...")
+sys.path.append("....")
 
 from base.reader import Reader
-from .ship import Ship
+from ..source.ship.ship import Ship
 
 class SourceReader(Reader):
 
@@ -58,7 +58,7 @@ class SourceReader(Reader):
         def __print_list(name, lst):
             num = len(lst)
             if num > 0:
-                print(f"{num} sources {name}: {', '.join([source.name for source in lst])}")
+                print(f"{num} source{'s' if num > 1 else ''} {name}: {', '.join([source.name for source in lst])}")
 
         num_added, num_removed = len(added), len(removed)
         __print_list('added', added)

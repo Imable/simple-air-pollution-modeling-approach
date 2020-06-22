@@ -1,6 +1,7 @@
 from .loop import Loop
-from .sources.source_reader import SourceReader
+from .sources.input.source_reader import SourceReader
 from .results.result_writer import ResultWriter
+from .sources.source.source_factory import SourceFactory
 
 class Model:
     def __init__(self, 
@@ -20,7 +21,7 @@ class Model:
             1
         )
 
-        self.active_sources = []
+        self.active_sources = SourceFactory.get_initial_sources(debug)
 
         self.results = ResultWriter(pm_type)
         
@@ -38,13 +39,13 @@ class Model:
         # Flag the removed sources as removed, such that we can calculate their removal penalty and remove them before the next iteration
         for source in removed:
             index = self.active_sources.index(source)
-            self.active_sources[index].removed = True
+            self.active_sources[index].remove()
 
     def __combine_emissions(self, cur_ts, step):
         emissions = 0
 
         for source in self.active_sources:
-            emissions += source.emit(step)
+            emissions += source.emit(step, cur_ts)
         
         return emissions
     
