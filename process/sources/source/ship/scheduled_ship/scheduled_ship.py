@@ -2,15 +2,12 @@ from .schedule import Schedule, MANOUVERING_TIME
 from ..ship import Ship
 
 class ScheduledShip(Ship):
-    def __init__(self, schedule, name, debug):
-        self.debug     = debug
+    def __init__(self, schedule, *args, **kwargs):
 
-        self.name      = name
+        super().__init__(*args, **kwargs)
+
         self.schedule  = Schedule(schedule)
-        self.emissions = {}
-
         self.manouver  = False, None
-        self.removed   = False
     
     def __get_state(self, step, cur_ts):
         '''
@@ -27,7 +24,6 @@ class ScheduledShip(Ship):
 
             elif state == 'leaving':
                 self.manouver = True, cur_ts + MANOUVERING_TIME
-        print(f'HURTIGRUTEN: {self.manouver}')
         
         return state
 

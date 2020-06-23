@@ -1,4 +1,5 @@
 from .ship.scheduled_ship.scheduled_ship import ScheduledShip
+from datetime import datetime
 
 class SourceFactory:
 
@@ -37,6 +38,7 @@ class SourceFactory:
                         '14:00'
                     ]
                 },
+                datetime.now(),
                 'Hurtigruten',
                 debug
             )
