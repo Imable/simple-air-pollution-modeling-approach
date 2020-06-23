@@ -45,7 +45,6 @@ class FormulaManager:
         # Emissions in tons
         emissions = T * (me + ae)
 
-        # Convert tons to micrograms
         return emissions * 1000000
     
     def get_manouvering(self):

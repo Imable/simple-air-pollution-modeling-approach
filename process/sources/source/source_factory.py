@@ -8,13 +8,13 @@ class SourceFactory:
 
     @staticmethod
     def get_initial_sources(debug):
-        {
-          ('01-08-2016', '11-08-2016'): [
-              '9:30',
-              '13:00',
-              '16:00'
-          ]
-        }
+        # {
+        #   ('01-08-2016', '11-08-2016'): [
+        #       '9:30',
+        #       '13:00',
+        #       '16:00'
+        #   ]
+        # }
 
         return [
             ScheduledShip(
