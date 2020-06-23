@@ -1,3 +1,10 @@
+**SAPMA**
+
+_How to run_
+
+`pipenv run python main.py --start_ts 01-05-2015 --end_ts 31-08-2019 --step 60 --inversion_layer 600 --source_data ships.xlsx --measurements_data Geiranger_2015_2019_measurements.xlsx --station '[\"G\"]' --pm_type PM1`
+
+
 Input
 - Timeframe 
 - Timestep
