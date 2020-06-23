@@ -1,4 +1,5 @@
 from ..source import Source
+from ...pm_formula.formula_manager import FormulaManager
 from datetime import timedelta
 
 MANOUVERING_TIME = timedelta(minutes=30)
@@ -10,6 +11,8 @@ class Ship(Source):
         self.removed   = False
 
         super().__init__(*args, **kwargs)
+
+        self.formula   = FormulaManager(self.name)
 
     def update(self, step, cur_ts, cur_step_end):      
         super().update(step, cur_ts, cur_step_end)
@@ -26,11 +29,10 @@ class Ship(Source):
         return not self.manouver[0] and self.removed
 
     def manouvering(self, step):
-        return 0.05 * (step.total_seconds() / 60)
+        return self.formula.get_manouvering() * (step.total_seconds() / 60)
 
     def idle(self, step):
-        # Addition per minute
-        return 0.001 * (step.total_seconds() / 60)
+        return self.formula.get_idle() * (step.total_seconds() / 60)
 
     def get_emissions(self, step, cur_ts):
         '''
