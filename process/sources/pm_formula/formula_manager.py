@@ -43,7 +43,7 @@ class FormulaManager:
         ae = Pae * LFae * EFae
 
         # Emissions in tons
-        emissions = T * (me + ae) * 0.000001
+        emissions = T * (me + ae)
 
         # Convert tons to micrograms
         return emissions * 1000000

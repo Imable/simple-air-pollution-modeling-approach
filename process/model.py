@@ -2,11 +2,13 @@ from .loop import Loop
 from .sources.input.source_reader import SourceReader
 from .results.result_writer import ResultWriter
 from .sources.source.source_factory import SourceFactory
+from .layers.layers import Layers
 
 class Model:
     def __init__(self, 
                 start_ts, end_ts, step,
                 source_data,
+                inversion_layer,
                 pm_type,
                 debug):
         self.debug    = debug
@@ -23,6 +25,7 @@ class Model:
 
         self.active_sources = SourceFactory.get_initial_sources(debug)
 
+        self.layers  = Layers(inversion_layer)
         self.results = ResultWriter(pm_type)
         
     def __remove_old_sources(self):
@@ -47,8 +50,12 @@ class Model:
         for source in self.active_sources:
             source.update(step, cur_ts, cur_ts+step)
             emissions += source.gather_emissions(cur_ts)
-        
+
         return emissions
+    
+    def __calculate_concentration(self, emissions):
+        volume = self.layers.get_current_volume()
+        return emissions / volume
     
     def run(self):
         loop = Loop(
@@ -65,11 +72,7 @@ class Model:
     def iteration(self, cur_ts, step):
         self.__remove_old_sources()
         self.__update_sources(cur_ts)
-        emissions = self.__combine_emissions(cur_ts, step)
-        self.results.append(cur_ts, emissions)
+        emissions     = self.__combine_emissions(cur_ts, step)
+        concentration = self.__calculate_concentration(emissions)
 
-
-
-
-
-        
+        self.results.append(cur_ts, concentration)

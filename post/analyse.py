@@ -9,6 +9,8 @@ class Analyse:
         measurements_data,
         pm_type, station):
 
+        self.pm_type = pm_type
+
         self.results = results
         self.columns = [f'{s}_{pm_type}' for s in station]
 
@@ -36,6 +38,7 @@ class Analyse:
             y=self.columns,
             kind='line'
         )
+        # self.results[self.pm_type].cumsum().plot(ax=ax)
         self.results.plot(ax=ax)
         self.__date_format(ax)
  
