@@ -1,11 +1,13 @@
 import pandas
-from datetime import datetime
+from datetime import datetime, timedelta
 # Hacky way to import from the `base` folder in the root of the project
 import sys
 sys.path.append("....")
 
 from base.reader import Reader
 from ..source.ship.ship import Ship
+
+MANOUVERING_TIME = timedelta(minutes=30)
 
 class SourceReader(Reader):
 
@@ -28,19 +30,27 @@ class SourceReader(Reader):
         # Find the next rows that have the same date as `cur_date`
         while cur_row.DATE.dt.date.item() <= cur_date:
 
-            if cur_row.ETA.item() >= cur_ts and cur_row.ETA.item() < cur_step_end:
+            print(f'ETA-MAN {cur_row.ETA.item()-MANOUVERING_TIME}')
+            print(f'CUR_TS  {cur_ts}')
+            print(f'CUR_END {cur_step_end}')
+
+            # Add if the start of the manouvering falls in this timestep
+            if cur_row.ETA.item()-MANOUVERING_TIME >= cur_ts and cur_row.ETA.item()-MANOUVERING_TIME < cur_step_end:
                 # Source became active in this step
                 added.append(
                     Ship(
+                        cur_ts,
                         cur_row.SHIP.item(),
                         debug
                     )
                 )
-                    
+            
+            # Remove if the time of departure falls in this timestep
             if cur_row.ETD.item() >= cur_ts and cur_row.ETD.item() < cur_step_end:
                 # Source stopped being active this step
                 removed.append(
                     Ship(
+                        cur_ts,
                         cur_row.SHIP.item(),
                         debug
                     )

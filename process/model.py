@@ -27,7 +27,7 @@ class Model:
         
     def __remove_old_sources(self):
         # Only keep sources that have not been removed
-        self.active_sources = [source for source in self.active_sources if not source.removed]
+        self.active_sources = [source for source in self.active_sources if not source.can_be_removed()]
 
     def __update_sources(self, cur_ts):
         # Fetch the altered sources from the sheet
@@ -39,13 +39,14 @@ class Model:
         # Flag the removed sources as removed, such that we can calculate their removal penalty and remove them before the next iteration
         for source in removed:
             index = self.active_sources.index(source)
-            self.active_sources[index].remove()
+            self.active_sources[index].remove(cur_ts)
 
     def __combine_emissions(self, cur_ts, step):
         emissions = 0
 
         for source in self.active_sources:
-            emissions += source.emit(step, cur_ts)
+            source.update(step, cur_ts, cur_ts+step)
+            emissions += source.gather_emissions(cur_ts)
         
         return emissions
     

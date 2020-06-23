@@ -1,13 +1,13 @@
 from .schedule import Schedule
-from ..ship import Ship
+from ..ship import Ship, MANOUVERING_TIME
 
-class ShipState():
-    def __init__(self):
-        # Manouvering, Present, Not present
-        self.state = None
+# class ShipState():
+#     def __init__(self):
+#         # Manouvering, Present, Not present
+#         self.state = None
 
-    def get_state(self):
-        return self.state
+#     def get_state(self):
+#         return self.state
 
 class ScheduledShip(Ship):
     def __init__(self, schedule, *args, **kwargs):
@@ -16,7 +16,7 @@ class ScheduledShip(Ship):
         self.schedule = Schedule(schedule)
         self.present  = False
         # Override manouver variable, because a scheduled ship is not always there
-        self.manouver = False
+        self.manouver = False, None
     
     def __get_presence(self, step, cur_ts):
         '''
@@ -26,7 +26,7 @@ class ScheduledShip(Ship):
 
         if self.present != new_presence:
             self.present != self.present
-            self.manouver = True
+            self.manouver = True, cur_ts + ANOUVERING_TIME
         
         return new_presence
         

@@ -1,19 +1,32 @@
 from ..source import Source
+from datetime import timedelta
+
+MANOUVERING_TIME = timedelta(minutes=30)
 
 class Ship(Source):
 
-    def __init__(self, *args, **kwargs):
-        self.manouver  = True
+    def __init__(self, cur_ts, *args, **kwargs):
+        self.manouver  = True, cur_ts + MANOUVERING_TIME
         self.removed   = False
 
         super().__init__(*args, **kwargs)
 
-    def remove(self):
-        self.manouver = True
-        self.removed  = True
+    def update(self, step, cur_ts, cur_step_end):      
+        super().update(step, cur_ts, cur_step_end)
 
-    def manouvering(self):
-        return 0.02
+        # If the ship is manouvering now and the end of its manouvering is in this timeframe, stop manouvering the next timestep
+        if self.manouver[0] and self.manouver[1] <= cur_step_end:
+            self.manouver = False, None
+
+    def remove(self, cur_ts):
+        self.manouver = True, cur_ts + MANOUVERING_TIME
+        self.removed  = True
+    
+    def can_be_removed(self):
+        return not self.manouver[0] and self.removed
+
+    def manouvering(self, step):
+        return 0.05 * (step.total_seconds() / 60)
 
     def idle(self, step):
         # Addition per minute
@@ -25,13 +38,9 @@ class Ship(Source):
         '''
         emissions = 0
 
-        # If the source has been added, add the addition penalty
-        if self.manouver:
-            emissions += self.manouvering()
-            self.manouver = False
-
-        # If the source has been removed, add the removal penalty and stop
-        if not self.removed:
+        if self.manouver[0]:
+            emissions += self.manouvering(step)
+        else:
             emissions += self.idle(step)
         
         return emissions
