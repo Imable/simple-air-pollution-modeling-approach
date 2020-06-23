@@ -30,10 +30,6 @@ class SourceReader(Reader):
         # Find the next rows that have the same date as `cur_date`
         while cur_row.DATE.dt.date.item() <= cur_date:
 
-            print(f'ETA-MAN {cur_row.ETA.item()-MANOUVERING_TIME}')
-            print(f'CUR_TS  {cur_ts}')
-            print(f'CUR_END {cur_step_end}')
-
             # Add if the start of the manouvering falls in this timestep
             if cur_row.ETA.item()-MANOUVERING_TIME >= cur_ts and cur_row.ETA.item()-MANOUVERING_TIME < cur_step_end:
                 # Source became active in this step
