@@ -1,7 +1,0 @@
-README.md
-setup.py
-SAPMA.egg-info/PKG-INFO
-SAPMA.egg-info/SOURCES.txt
-SAPMA.egg-info/dependency_links.txt
-SAPMA.egg-info/requires.txt
-SAPMA.egg-info/top_level.txt

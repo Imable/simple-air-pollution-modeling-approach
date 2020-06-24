@@ -4,8 +4,8 @@ class InputManager:
         self.handler = handler
     
     def __call__(self):
-        file    = self.open()
-        content = self.read(file)
+        file           = self.open()
+        content        = self.read(file)
         parsed_content = self.parse(content)
         return self.write_out(parsed_content)
 
