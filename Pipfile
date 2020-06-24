@@ -6,10 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-pandas = "*"
-xlrd = "*"
-tqdm = "*"
-matplotlib = "*"
+sapma = {editable = true,path = "."}
 
 [requires]
 python_version = "3.8"

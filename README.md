@@ -1,34 +1,21 @@
-Input
-- Timeframe 
-- Timestep
-- Initial concentration
-- 
+**SAPMA - Simmple Air Pollution Modeling Approach**
 
-Output
-- Final PM concentration
-- Build-up over time
-- Compare to measurements taken in that timeframe
+*Input file*
+_Timing_
+T start_ts 10-06-2016
+T end_ts   20-06-2016
+T step     30
 
+_Data_
+D location     .
+D ships        ship_data.xlsx
+D measurements measurement_data.xlsx
 
-Excel with ships containing
-- TAB = Time in harbour
-- GRT = Volume in tons (according to which we divide into big/small group)
+_Sources_
+S
 
-Formula for calculating the emmisions + static values (include time)
+_Layer_
+L
 
-Volume of GeoTIFF 
-
-Model
-- Timestep every interval
-- Determine what ships are in harbor
-  - If they were already there
-  - If the ship is big or small
-- Calculate emmisions for timestep
-  - If first timestep for this ship: add timestep of manouvering (to max 0.5 hour summed) and timestep-manouvering of normal emmissions
-  - Else 1 timestep of normal emmissions
-- Add concentration to running summation of concentration
-
-Send to Ken
-- GRT value for big and small ship
-  - You will get back PME + PAE
-  - Use average for splitting big and small and then average again for the actual GRT value
+_Miscellaneous_
+M debug 1
