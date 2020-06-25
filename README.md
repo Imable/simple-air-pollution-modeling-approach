@@ -22,6 +22,7 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 2 (char 1)
 ```
 - The `.xslx` file containing ship specific data **has** to be called `ship_specific_data.xlsx` and cannot be renamed using arguments. This file must be placed in the same `/input/` folder as the other input files.
 - The `date` columns in the `.xlsx` files **must** be renamed to `DATE` in order for the program to parse them correctly.
+- Currently it is recommended to only plot **one** weather parameter, as there is only one axis available. Plotting multiple will clutter your graph significantly.
 
 ## Running the model
 
