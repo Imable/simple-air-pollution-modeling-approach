@@ -2,6 +2,8 @@ import argparse
 import json
 from datetime import datetime, timedelta
 
+SHIP_SPECIFIC_DATA = None
+
 ARGUMENTS = {
     'start_ts': {
         'help': 'Date of the start of calculation timeframe in DD-MM-YYYY format',
@@ -18,23 +20,18 @@ ARGUMENTS = {
         'parse': (lambda x: timedelta(minutes=int(x))),
         'default': '60'
     },
-    'raster': {
-        'help': 'Filepath of the file containing the digital elevation model',
-        'parse': (lambda x: x),
-        'default': 'No raster provided'
-    },
     'inversion_layer': {
         'help': 'Inversion layer height in meters (m)',
         'parse': (lambda x: int(x)),
         'default': 500
     },
     'source_data': {
-        'help': 'Filepath of the .xlsx file containing source data',
+        'help': 'Filename of the .xlsx file containing source data',
         'parse': (lambda x: x),
         'default': None
     },
     'measurements_data': {
-        'help': 'Filepath for the .xlsx file containing your own measurements',
+        'help': 'Filename of the .xlsx file containing your own measurements',
         'parse': (lambda x: x),
         'default': None
     },
@@ -47,6 +44,11 @@ ARGUMENTS = {
         'help': 'Station of which the measurements will be plotted (G/C/D). Enter as: \'[\\"C\\", \\"D\\"]\'',
         'parse': (lambda x: json.loads(x)),
         'default': '["G"]'
+    },
+    'weather_plot': {
+        'help': 'Column of the weather data that you want to plot as well. Enter as: \'[\\"G_T\\"]\'. If omitted, nothing will be plotted on the second axis.',
+        'parse': (lambda x: json.loads(x)),
+        'default': '[]'
     },
     'debug': {
         'help': 'Show debug messages (will be slower)',
@@ -79,6 +81,4 @@ class Arguments():
             args_parsed_to_type[tag] = props['parse'](args[tag])
         
         return args_parsed_to_type
-        
-        
         

@@ -21,5 +21,6 @@ if __name__ == "__main__":
         conf['step'],
         conf['measurements_data'],
         conf['pm_type'],
-        conf['station']
+        conf['station'],
+        conf['weather_plot']
     )
