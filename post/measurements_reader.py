@@ -9,8 +9,10 @@ from base.reader import Reader
 class MeasurementsReader(Reader):
     def __init__(self, 
         columns,
+        pm_type,
         *args, **kwargs):
         self.columns = columns
+        self.pm_type = pm_type
         
         super().__init__(*args, **kwargs)
 
@@ -18,10 +20,11 @@ class MeasurementsReader(Reader):
         # Parse the date and time columns to the datetime format
         df['DATE'] = pandas.to_datetime(df['DATE'], errors='coerce')
     
-        # Drop the rows that do not have a valid date or time
-        # for column in self.columns:
-        #     df = df.dropna(subset=df[column])
-
+        # Multiply PM measurements from sheet by 1000 to achieve the same unit as the model (microgram/m3)
+        for column in self.columns:
+            if self.pm_type in column:
+                df[column] *= 1000
+        
         # Only select relevant columns
         df = df[['DATE'] + self.columns]
 

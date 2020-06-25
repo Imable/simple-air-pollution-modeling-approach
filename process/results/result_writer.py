@@ -14,4 +14,4 @@ class ResultWriter:
         return pandas.DataFrame.from_dict(
             self.emissions, 
             orient='index',
-            columns=[self.pm_type])
+            columns=[f'MODEL_{self.pm_type}'])
