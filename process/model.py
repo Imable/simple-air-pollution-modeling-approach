@@ -20,7 +20,7 @@ class Model:
         self.source_data = SourceReader(
             source_data, 
             start_ts, end_ts, step,
-            truncate=0,
+            mask=0,
             header_rows=1
         )
 

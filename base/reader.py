@@ -6,7 +6,7 @@ BASE_PATH = './input'
 class Reader:
     def __init__(self, fname, 
             start_ts, end_ts, step,
-            truncate=True,
+            mask=True,
             header_rows=0,
             sheet=0):
 
