@@ -28,7 +28,7 @@ class SourceReader(Reader):
         cur_row = self.get_row_at(local_pointer)
 
         # Find the next rows that have the same date as `cur_date`
-        while cur_row.DATE.dt.date.item() <= cur_date:
+        while cur_row.DATE.dt.date.item() == cur_date:
 
             # Add if the start of the manouvering falls in this timestep
             if cur_row.ETA.item()-MANOUVERING_TIME >= cur_ts and cur_row.ETA.item()-MANOUVERING_TIME < cur_step_end:

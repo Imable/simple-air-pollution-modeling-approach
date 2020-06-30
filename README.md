@@ -31,5 +31,5 @@ All available arguments can be listed by executing the following command: `pipen
 ### Executing the model
 The model can be executed by running the command `pipenv run python main.py [all arguments]`, where `[all arguments]` stands for the arguments required to run the model. An example execution command for PowerShell is listed below.
 ```
-pipenv run python main.py --start_ts 01-05-2019 --end_ts 31-08-2019 --step 30 --inversion_layer 500 --source_data ships.xlsx --measurements_data Geiranger_2015_2019_measurements.xlsx --station '[\"G\"]' --pm_type PM1 --weather_plot '[\"G_mxWS\"]'
+pipenv run python main.py --start_ts 01-05-2019 --end_ts 31-08-2019 --step 30 --inversion_layer 500 --source_data ships.xlsx --measurements_data Geiranger_2015_2019_measurements.xlsx --station '[\"G\"]' --pm_type PM1 --weather_plot '[\"G_avWS\"]'
 ```

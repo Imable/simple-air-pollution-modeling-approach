@@ -19,8 +19,9 @@ class Model:
 
         self.source_data = SourceReader(
             source_data, 
-            start_ts, end_ts, step, 
-            1
+            start_ts, end_ts, step,
+            truncate=0,
+            header_rows=1
         )
 
         self.active_sources = SourceFactory.get_initial_sources(debug)
