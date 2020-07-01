@@ -2,12 +2,11 @@ from ..source import Source
 from ...pm_formula.formula_manager import FormulaManager
 from datetime import timedelta
 
-MANOUVERING_TIME = timedelta(minutes=30)
-
 class Ship(Source):
 
-    def __init__(self, cur_ts, *args, **kwargs):
-        self.manouver  = True, cur_ts + MANOUVERING_TIME
+    def __init__(self, cur_ts, manouvering_time, *args, **kwargs):
+        self.manouvering_time = manouvering_time
+        self.manouver  = True, cur_ts + self.manouvering_time
         self.removed   = False
 
         super().__init__(*args, **kwargs)
@@ -22,7 +21,7 @@ class Ship(Source):
             self.manouver = False, None
 
     def remove(self, cur_ts):
-        self.manouver = True, cur_ts + MANOUVERING_TIME
+        self.manouver = True, cur_ts + self.manouvering_time
         self.removed  = True
     
     def can_be_removed(self):

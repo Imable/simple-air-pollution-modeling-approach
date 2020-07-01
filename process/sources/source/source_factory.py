@@ -1,5 +1,5 @@
 from .ship.scheduled_ship.scheduled_ship import ScheduledShip
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class SourceFactory:
 
@@ -38,7 +38,9 @@ class SourceFactory:
                         '14:00'
                     ]
                 },
+                timedelta(minutes=20), # Harbour time
                 datetime.now(),
+                timedelta(minutes=20), # Manouvering time
                 'Hurtigruten',
                 debug
             )

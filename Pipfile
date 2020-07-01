@@ -10,6 +10,7 @@ pandas = "*"
 xlrd = "*"
 tqdm = "*"
 matplotlib = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.8"

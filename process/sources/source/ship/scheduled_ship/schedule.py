@@ -1,10 +1,9 @@
 from datetime import date, datetime, timedelta
 
-HARBOUR_TIME = timedelta(minutes=20)
-MANOUVERING_TIME = timedelta(minutes=20)
-
 class Schedule:
-    def __init__(self, schedule):
+    def __init__(self, schedule, manouvering_time=timedelta(minutes=20), harbour_time=timedelta(minutes=20)):
+        self.manouvering_time = manouvering_time
+        self.harbour_time = harbour_time
         self.pointer  = 0 
         self.schedule = self.__parse_schedule(schedule)
 
@@ -39,9 +38,9 @@ class Schedule:
         return res.time()
     
     def __make_interval(self, time):
-        start_arrival = self.__time_calc(time, MANOUVERING_TIME, '-') 
+        start_arrival = self.__time_calc(time, self.manouvering_time, '-') 
         start_idle    = time
-        start_leaving = self.__time_calc(time, HARBOUR_TIME, '+')
+        start_leaving = self.__time_calc(time, self.harbour_time, '+')
 
         return start_arrival, start_idle, start_leaving
 
@@ -68,7 +67,7 @@ class Schedule:
                     state = 'arrival'
                 elif cur_time >= idle and cur_time < leave:
                     state = 'idle'
-                elif cur_time >= leave and cur_time < self.__time_calc(leave, MANOUVERING_TIME, '+'):
+                elif cur_time >= leave and cur_time < self.__time_calc(leave, self.manouvering_time, '+'):
                     state = 'leaving'
                 
                 if state:

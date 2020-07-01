@@ -36,6 +36,7 @@ class SourceReader(Reader):
                 added.append(
                     Ship(
                         cur_ts,
+                        MANOUVERING_TIME,
                         cur_row.SHIP.item(),
                         debug
                     )
@@ -47,6 +48,7 @@ class SourceReader(Reader):
                 removed.append(
                     Ship(
                         cur_ts,
+                        MANOUVERING_TIME,
                         cur_row.SHIP.item(),
                         debug
                     )
