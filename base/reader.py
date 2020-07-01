@@ -15,12 +15,14 @@ class Reader:
         self.step     = step
 
         self.data = pandas.read_excel(self.__get_path(fname), header=header_rows, sheet_name=sheet)
+
         self.data = self.parse_and_clean(self.data)
 
         if mask:
             # Remove the rows that precede the timeframe
-            mask      = (self.data['DATE'] >= start_ts) & (self.data['DATE'] <= end_ts)
-            self.data = self.data.loc[mask]
+            self.data = self.data.loc[start_ts:end_ts]
+            
+
 
     def __get_path(self, fname):
         return f'{ BASE_PATH }/{ fname }'
