@@ -1,12 +1,13 @@
-from .schedule import Schedule, MANOUVERING_TIME
+from .schedule import Schedule
 from ..ship import Ship
+from datetime import timedelta
 
 class ScheduledShip(Ship):
-    def __init__(self, schedule, *args, **kwargs):
+    def __init__(self, schedule, harbour_time=timedelta(minutes=20), *args, **kwargs):
 
         super().__init__(*args, **kwargs)
-
-        self.schedule  = Schedule(schedule)
+        
+        self.schedule  = Schedule(schedule, self.manouvering_time, harbour_time)
         self.manouver  = False, None
     
     def __get_state(self, step, cur_ts):
@@ -17,13 +18,13 @@ class ScheduledShip(Ship):
 
         if state:
             if state == 'arrival':
-                self.manouver = True, cur_ts + MANOUVERING_TIME
+                self.manouver = True, cur_ts + self.manouvering_time
 
             elif state == 'idle':
                 self.manouver = False, None
 
             elif state == 'leaving':
-                self.manouver = True, cur_ts + MANOUVERING_TIME
+                self.manouver = True, cur_ts + self.manouvering_time
         
         return state
 

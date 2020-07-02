@@ -1,7 +1,6 @@
 # SAPMA: Simple Air Pollution Modelling Approach
 
 ## Prerequisites
-- This repository cloned to your local machine.
 - Python 3.8(.1) installed on your system.
     - Other version should also work, but this requires changing the Python version in the Pipfile in the root of the project.
 - The `Tkinter` Python package.
@@ -9,6 +8,8 @@
     - If it is missing from your system, modify your Python installation and select it in the installer.
 - `pipenv` installed on your system.
     - Do so by running `pip install pipenv`.
+- This repository cloned to your local machine and install using `pipenv`
+    - Do so by running `pipenv install` in the root directory of the project.
 - A folder named `input` in the root of the folder containing the `.xlsx` files with measurements, source data and ship specific data.
 
 ## Caveats
@@ -32,5 +33,5 @@ All available arguments can be listed by executing the following command: `pipen
 ### Executing the model
 The model can be executed by running the command `pipenv run python main.py [all arguments]`, where `[all arguments]` stands for the arguments required to run the model. An example execution command for PowerShell is listed below.
 ```
-pipenv run python main.py --start_ts 01-05-2019 --end_ts 31-08-2019 --step 30 --inversion_layer 500 --source_data ships.xlsx --measurements_data Geiranger_2015_2019_measurements.xlsx --station '[\"G\"]' --pm_type PM1 --weather_plot '[\"G_mxWS\"]'
+pipenv run python main.py --start_ts 01-05-2019 --end_ts 31-08-2019 --step 30 --inversion_layer 1200 --source_data ships.xlsx --measurements_data Geiranger_2015_2019_measurements.xlsx --station '[\"G\"]' --pm_type PM1 --weather_plot '[\"G_avWS\"]'
 ```

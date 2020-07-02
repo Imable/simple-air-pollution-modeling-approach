@@ -50,6 +50,11 @@ ARGUMENTS = {
         'parse': (lambda x: json.loads(x)),
         'default': '[]'
     },
+    'base_concentration': {
+        'help': 'The concentration that is in the air of the model at the starting point.',
+        'parse': lambda x: float(x),
+        'default': 0
+    },
     'debug': {
         'help': 'Show debug messages (will be slower)',
         'parse': (lambda x: bool(x)),
