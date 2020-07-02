@@ -79,6 +79,7 @@ class Analyse:
                 x='DATE',
                 y=self.columns, 
                 ax=ax)
+            ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
         else:
             self.dust_data.plot.area(
                 x_compat=True,
@@ -86,6 +87,7 @@ class Analyse:
                 y=self.columns, 
                 ax=ax,
                 stacked=False)
+            ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
         
     def __add_model_plot(self, ax):
         self.results.plot(
