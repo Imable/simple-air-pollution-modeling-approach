@@ -152,17 +152,28 @@ class Analyse:
         return ax
     
     def __write_results(self):
-        area_model = numpy.trapz(self.results_with_base[self.model_col_name].cumsum().tolist(), dx=(self.step.total_seconds() / 60))
+        area_model = numpy.trapz(self.results_with_base[self.model_col_name].cumsum().tolist(), dx=self.step.total_seconds()/3600)
 
         area_values = {}
         for column in self.columns:
             if column != 'DATE':
-                area_measurement = numpy.trapz(self.dust_data[column].tolist(), dx=(self.step.total_seconds() / 60))
+                area_measurement = numpy.trapz(self.dust_data[column].tolist(), dx=self.step.total_seconds()/3600)
                 area_values[column] = area_measurement
 
         print(f'Cumulative concentration in volume: {area_model} \u03BCg/m3')
+        print(f'____________________________________')
+        print('')
+
+        num_hours = (self.end_ts - self.start_ts).total_seconds()/3600
+
         for station, area in area_values.items():
-            print(f' > Difference between model estimation and {station}: {area_model - area} \u03BCg/m3')
+            print(f'{station}')
+            print(f' > Accumulated hourly measured concentration: {area} \u03BCg/m3')
+            print(f' > Difference between model estimation and {station}: {area_model} - {area} = {area_model - area} \u03BCg/m3')
+            print(f' > Released concentration at {station} every hour: {(area_model - area)/num_hours} \u03BCg/m3')
+            print(f'____________________________________')
+            print('')
+
         
     def plot(self):
         fig = plt.figure()
