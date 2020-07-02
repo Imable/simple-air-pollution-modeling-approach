@@ -15,6 +15,9 @@ class Analyse:
         weather_plot,
         base_concentration):
 
+        print('____________________________________')
+        print('')
+
         self.start_ts = start_ts
         self.end_ts   = end_ts
         self.step     = step
@@ -111,7 +114,7 @@ class Analyse:
         if self.weather_plot:
             self.__add_weater_plot(ax)
 
-        self.__date_format(ax)
+        # self.__date_format(ax)
 
         return ax
     
@@ -123,22 +126,9 @@ class Analyse:
         ax.title.set_text(title)
 
         self.__add_dust_plot(ax, area=1)
-        results_with_base = self.__add_model_cumsum(ax)
+        self.results_with_base = self.__add_model_cumsum(ax)
 
-        self.__date_format(ax)
-
-        area_model = numpy.trapz(results_with_base[self.model_col_name].cumsum().tolist())
-        print(f'Model cumsum area {area_model}')
-
-        area_values = {}
-        for column in self.columns:
-            if column != 'DATE':
-                area_measurement = numpy.trapz(self.dust_data[column].tolist())
-                area_values[column] = area_measurement
-                print(f'Measurement area of {column}: {area_measurement}')
-
-        for station, area in area_values.items():
-            print(f'Lost particles at {station}: {area_model - area}')
+        # self.__date_format(ax)
             
         return ax
     
@@ -148,20 +138,32 @@ class Analyse:
         '''
         ax = fig.add_subplot(grid[1,1])
         ax.title.set_text(title)
+        
+        dust_data_diff = self.dust_data[['DATE']].copy()
+        dust_data_diff[self.columns] = self.dust_data[self.columns].diff()
+        dust_data_diff.plot(ax=ax, x='DATE', y=self.columns)
+        
+        results_diff = self.results.copy()
+        results_diff[self.model_col_name] = self.results[self.model_col_name].diff()
+        results_diff.plot(ax=ax)
 
-        print(self.results.values)
-
-        derivatives = [
-            pandas.Series(numpy.gradient(self.results.values), self.results.index, name=f'{self.model_col_name}_derivative')
-        ]
-
-        for column in self.columns:
-            if column != 'DATE':
-                derivatives.append(pandas.Series(numpy.gradient(self.dust_data[column].values), self.results.index, name=f'{column}_derivative'))
+        # self.__date_format(ax)
 
         return ax
-        
+    
+    def __write_results(self):
+        area_model = numpy.trapz(self.results_with_base[self.model_col_name].cumsum().tolist(), dx=(self.step.total_seconds() / 60))
 
+        area_values = {}
+        for column in self.columns:
+            if column != 'DATE':
+                area_measurement = numpy.trapz(self.dust_data[column].tolist(), dx=(self.step.total_seconds() / 60))
+                area_values[column] = area_measurement
+
+        print(f'Cumulative concentration in volume: {area_model} \u03BCg/m3')
+        for station, area in area_values.items():
+            print(f' > Difference between model estimation and {station}: {area_model - area} \u03BCg/m3')
+        
     def plot(self):
         fig = plt.figure()
         grid = self.__get_grid()
@@ -170,7 +172,12 @@ class Analyse:
             'Raw measurements against raw model')
         ax2 = self.__plot_dust_modelcumsum(fig, grid,
             'Raw measurements against cumulative sum of raw model')
-        # ax3 = self.__plot_derivatives(fig, grid,
-        #     'Derivatives of raw measurements and raw model')
+        ax3 = self.__plot_derivatives(fig, grid,
+            'Derivatives of raw measurements and raw model')
+        ax4 = self.__write_results()
+
+        # uncomment to store results in a file
+        # fig.savefig("results.pdf", bbox_inches='tight')
+        fig.tight_layout()
 
         plt.show()
