@@ -28,6 +28,7 @@ class Analyse:
         self.results            = results
         self.columns            = [f'{s}_{pm_type}' for s in station]
         self.model_col_name     = f'MODEL_{self.pm_type}'
+        self.results_with_base  = self.__inject_base_concentration(self.results.copy())
 
         # Create Pandas dataframe from the measurements .xlsx file
         self.dust_data = MeasurementsReader(
@@ -63,14 +64,16 @@ class Analyse:
         '''
         Adds weather factor plot on the second Y axis
         '''
-        ax2 = ax.twinx()
+        # ax2 = ax.twinx()
         self.weather_data.plot(
+            x_compat=True,
+            x='DATE',
             y=self.weather_plot,
-            ax=ax2,
+            ax=ax,
             color='gray',
             ls='dashed')
-        ax2.set_axisbelow(True)
-        ax2.legend(loc='upper right')
+        ax.set_axisbelow(True)
+        ax.legend(loc='upper right')
     
     def __add_dust_plot(self, ax, area=0):
         if not area:
@@ -94,12 +97,10 @@ class Analyse:
             ax=ax)
 
     def __add_model_cumsum(self, ax):
-        self.results_with_base = self.__inject_base_concentration(self.results.copy())
         self.results_with_base.cumsum().plot.area(
             ax=ax,
             stacked=False
         )
-        return self.results_with_base
     
     def __plot_dust_model_weather(self, fig, grid, title):
         '''
@@ -110,12 +111,12 @@ class Analyse:
 
         self.__add_dust_plot(ax)
         self.__add_model_plot(ax)
-        
-        ax.legend(loc='upper left')
-        
-        if self.weather_plot:
-            self.__add_weater_plot(ax)
 
+        ax.legend(loc='upper left')
+
+        if self.weather_plot:
+            self.__add_weater_plot(ax.twinx())
+        
         # self.__date_format(ax)
 
         return ax
@@ -128,7 +129,12 @@ class Analyse:
         ax.title.set_text(title)
 
         self.__add_dust_plot(ax, area=1)
-        self.results_with_base = self.__add_model_cumsum(ax)
+        self.__add_model_cumsum(ax)      
+
+        ax.legend(loc='upper left')
+
+        if self.weather_plot:
+            self.__add_weater_plot(ax.twinx())
 
         # self.__date_format(ax)
             
