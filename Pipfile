@@ -11,6 +11,7 @@ xlrd = "*"
 tqdm = "*"
 matplotlib = "*"
 numpy = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.8"
