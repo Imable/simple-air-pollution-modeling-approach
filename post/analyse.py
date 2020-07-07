@@ -19,6 +19,8 @@ class Analyse:
         print('____________________________________')
         print('')
 
+        self.export = {}
+
         self.start_ts = start_ts
         self.end_ts   = end_ts
         self.step     = step
@@ -29,7 +31,7 @@ class Analyse:
         self.results            = results
         self.columns            = [f'{s}_{pm_type}' for s in station]
         self.model_col_name     = f'MODEL_{self.pm_type}'
-        self.results_with_base_cumsum      = self.__inject_base_concentration_and_cumsum()
+        # self.results_with_base_cumsum      = self.__inject_base_concentration_and_cumsum()
         self.results_with_base_raw_cumarea = self.__raw_area()
 
         # Create Pandas dataframe from the measurements .xlsx file
@@ -50,16 +52,21 @@ class Analyse:
         ).fetch()
 
         self.fig, self.grid = plt.figure(), self.__get_grid()
-        self.excel_export()
+
         self.plot()
+        self.excel_export()
     
     def excel_export(self):
         writer = pandas.ExcelWriter('out.xlsx')
-        self.results.to_excel(writer, 'RAW_MODEL_RESULTS')
-        self.results_with_base_cumsum.to_excel(writer, 'MODEL_RESULTS_CUMULATIVE_AREA')
-        self.results_with_base_raw_cumarea.to_excel(writer, 'MODEL_RESULTS_RAW_AREA')
+
+        for name, df in self.export.items():
+            df.to_excel(writer, name)
+
         self.dust_data.to_excel(writer, 'DUST_DATA')
         self.weather_data.to_excel(writer, 'WEATHER_DATA')
+
+        print('Done! See results in `out.xlsx`')
+        
         writer.save()
 
     def __get_grid(self):
@@ -78,6 +85,8 @@ class Analyse:
         results.iloc[0, results.columns.get_loc(self.model_col_name)] += self.base_concentration
         results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
         
+        self.export['Model concentration in system'] = results[self.model_col_name]
+
         return results
     
     def __date_format(self, ax):
@@ -192,8 +201,6 @@ class Analyse:
             tmp[column] = tmp[column].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
             tmp[diff_column] = tmp[self.model_col_name] - tmp[column]
         
-        print(tmp)
-        
         tmp.plot(
             x='DATE',
             y=diff_columns, 
@@ -202,6 +209,28 @@ class Analyse:
         ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
 
         self.__add_optional_weater_plot(ax)
+
+    def __plot_raw_difference(self, ax):
+        tmp = self.dust_data.copy()
+
+        diff_columns = []
+
+        for column in self.columns:
+            diff_column = f'diff_{column}'
+            diff_columns.append(diff_column)
+            tmp[diff_column] = self.results_with_base_raw_cumarea.reset_index()[self.model_col_name] - tmp[column]
+
+        self.export['Difference in concentration'] = tmp.set_index('DATE')[diff_columns]
+        
+        tmp.plot(
+            x='DATE',
+            y=diff_columns, 
+            ax=ax,
+            x_compat=True)
+        ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
+
+        # self.__add_optional_weater_plot(ax)
+        
     
     def __write_results(self):
         area_model = numpy.trapz(self.results_with_base_raw_cumarea[self.model_col_name].tolist(), dx=self.step.total_seconds()/3600)
@@ -220,9 +249,9 @@ class Analyse:
 
         for station, area in area_values.items():
             print(f'{station}')
-            print(f' > Accumulated hourly measured concentration: {area} \u03BCg/m3')
+            print(f' > Accumulated measured concentration: {area} \u03BCg/m3')
             print(f' > Difference between model estimation and {station}: {area_model} - {area} = {area_model - area} \u03BCg/m3')
-            print(f' > Released concentration at {station} every hour: {(area_model - area)/num_hours} \u03BCg/m3')
+            # print(f' > Released concentration at {station} every hour: {(area_model - area)/num_hours} \u03BCg/m3')
             print(f'____________________________________')
             print('')
     
@@ -233,11 +262,15 @@ class Analyse:
         
     def plot(self):
 
-        self.__plot((1,0), 'Difference in accumulated total concentration', self.__plot_difference_modelcumsum_dust)
         self.__plot((0,0), 'Expected concentration vs real concentration (per m3) currently in system', self.__plot_dust_model_raw_area)
+        self.__plot((1,0), 'Difference in concentration', self.__plot_raw_difference)
+        # self.__plot((1,0), 'Difference in accumulated total concentration', self.__plot_difference_modelcumsum_dust)
 
         self.__write_results()
 
+        print('Close the plot window to store the results in an Excel sheet...')
+        print('____________________________________')
+        print('')
 
         # ax1 = self.__plot_dust_model_weather(fig, grid, 
         #     'Raw measurements against raw model')
