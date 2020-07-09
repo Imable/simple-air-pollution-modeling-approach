@@ -96,22 +96,21 @@ class Analyse:
     def __get_grid(self):
         return gridspec.GridSpec(math.ceil(len(self.graphs)/2), 1 if len(self.graphs) < 2 else 2)
     
-    def __inject_base_concentration_and_cumsum(self):
-        results = self.results.copy()
-        results.iloc[0, results.columns.get_loc(self.model_col_name)] += self.base_concentration
-        results[self.model_col_name] = results[self.model_col_name].cumsum()
-        results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
+    # def __inject_base_concentration_and_cumsum(self):
+    #     results = self.results.copy()
+    #     results.iloc[0, results.columns.get_loc(self.model_col_name)] += self.base_concentration
+    #     results[self.model_col_name] = results[self.model_col_name].cumsum()
+    #     results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
 
-        return results
+    #     return results
     
     def __raw_area(self):
         results = self.results.copy()
 
         self.export['Values of non-accumulated sum'] = results[self.model_col_name]
 
-        results.iloc[0, results.columns.get_loc(self.model_col_name)] += self.base_concentration
+        results.iloc[0, results.columns.get_loc(self.model_col_name)] += (self.base_concentration * 2)
         results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
-
         return results
     
     def __date_format(self):
