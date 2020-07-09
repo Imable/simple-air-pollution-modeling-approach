@@ -55,6 +55,11 @@ ARGUMENTS = {
         'parse': lambda x: float(x),
         'default': 0
     },
+    'graphs': {
+        'help': 'The indices of the graphs that you want to show.  Enter as: \'[1, 2]\'. Leave empty to show all.',
+        'parse': (lambda x: json.loads(x)),
+        'default': 'null'
+    },
     'debug': {
         'help': 'Show debug messages (will be slower)',
         'parse': (lambda x: bool(x)),

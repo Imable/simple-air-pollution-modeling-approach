@@ -6,6 +6,7 @@ import matplotlib.gridspec as gridspec
 import numpy
 import pandas
 import openpyxl
+import math
 
 class Analyse:
     def __init__(self, 
@@ -14,7 +15,8 @@ class Analyse:
         measurements_data,
         pm_type, station,
         weather_plot,
-        base_concentration):
+        base_concentration,
+        graphs):
 
         print('____________________________________')
         print('')
@@ -34,6 +36,8 @@ class Analyse:
         # self.results_with_base_cumsum      = self.__inject_base_concentration_and_cumsum()
         self.results_with_base_raw_cumarea = self.__raw_area()
 
+        self.export['Model concentration in system'] = self.results_with_base_raw_cumarea
+
         # Create Pandas dataframe from the measurements .xlsx file
         self.dust_data = MeasurementsReader(
             self.columns,
@@ -51,6 +55,26 @@ class Analyse:
             start_ts, end_ts, step,
         ).fetch()
 
+        self.graph_def = [
+            {
+                'title': 'Raw model vs raw concentration measured',
+                'f': self.__plot_dust_model_weather
+            },
+            {
+                'title': 'Expected concentration (accumulated) vs real concentration (per m3) currently in system', 
+                'f': self.__plot_dust_model_raw_area
+            },
+            {
+                'title': 'Difference in concentration',
+                'f': self.__plot_raw_difference
+            },
+            {
+                'title': 'Difference in accumulated total concentration',
+                'f': self.__plot_difference_modelcumsum_dust
+            }
+        ]
+        self.graphs = graphs if graphs else [i for i in range(len(self.graph_def))]
+
         self.fig, self.grid = plt.figure(), self.__get_grid()
 
         self.plot()
@@ -62,15 +86,15 @@ class Analyse:
         for name, df in self.export.items():
             df.to_excel(writer, name)
 
-        self.dust_data.to_excel(writer, 'DUST_DATA')
-        self.weather_data.to_excel(writer, 'WEATHER_DATA')
+        self.dust_data.set_index('DATE').to_excel(writer, 'DUST_DATA')
+        self.weather_data.set_index('DATE').to_excel(writer, 'WEATHER_DATA')
 
         print('Done! See results in `out.xlsx`')
         
         writer.save()
 
     def __get_grid(self):
-        return gridspec.GridSpec(2,1)
+        return gridspec.GridSpec(math.ceil(len(self.graphs)/2), 1 if len(self.graphs) < 2 else 2)
     
     def __inject_base_concentration_and_cumsum(self):
         results = self.results.copy()
@@ -82,16 +106,16 @@ class Analyse:
     
     def __raw_area(self):
         results = self.results.copy()
+
+        self.export['Values of non-accumulated sum'] = results[self.model_col_name]
+
         results.iloc[0, results.columns.get_loc(self.model_col_name)] += self.base_concentration
         results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
-        
-        self.export['Model concentration in system'] = results[self.model_col_name]
 
         return results
     
-    def __date_format(self, ax):
-        date_format = mdates.DateFormatter('%d-%m-%Y %H:%M')
-        ax.xaxis.set_major_formatter(date_format)
+    def __date_format(self):
+        return mdates.DateFormatter('%d-%m-%Y %H:%M')
     
     def __add_optional_weater_plot(self, ax):
         '''
@@ -130,20 +154,29 @@ class Analyse:
             ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
         
     def __add_model_plot(self, ax):
-        self.results.plot(
+        self.results.reset_index().plot(
+            x='index',
+            y=self.model_col_name,
             ax=ax)
+        ax.set_xlabel('DATE')
 
     def __add_model_cumsum_area(self, ax):
-        self.results_with_base_cumsum.plot.area(
+        self.results_with_base_cumsum.reset_index().plot.area(
+            x='index',
+            y=self.model_col_name,
             ax=ax,
             stacked=False
         )
+        ax.set_xlabel('DATE')
     
     def __add_model_raw_area(self, ax):
-        self.results_with_base_raw_cumarea.plot.area(
+        self.results_with_base_raw_cumarea.reset_index().plot.area(
+            x='index',
+            y=self.model_col_name,
             ax=ax,
             stacked=False
         )
+        ax.set_xlabel('DATE')
     
     def __plot_dust_model_weather(self, ax):
         '''
@@ -155,8 +188,6 @@ class Analyse:
 
         self.__add_optional_weater_plot(ax)
         
-        # self.__date_format(ax)
-
         return ax
     
     def __plot_dust_model_raw_area(self, ax):
@@ -168,14 +199,13 @@ class Analyse:
         self.__add_model_raw_area(ax)      
         self.__add_optional_weater_plot(ax)
 
-        # self.__date_format(ax)
-            
         return ax
     
     def __plot_derivatives(self):
         '''
         Plot raw measurements against cumulative sum of the model values and print the areas
-        '''       
+        '''
+
         dust_data_diff = self.dust_data[['DATE']].copy()
         dust_data_diff[self.columns] = self.dust_data[self.columns].diff()
         dust_data_diff.plot(ax=ax, x='DATE', y=self.columns)
@@ -229,7 +259,7 @@ class Analyse:
             x_compat=True)
         ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
 
-        # self.__add_optional_weater_plot(ax)
+        self.__add_optional_weater_plot(ax)
         
     
     def __write_results(self):
@@ -257,14 +287,18 @@ class Analyse:
     
     def __plot(self, pos, title, func):
         ax = self.fig.add_subplot(self.grid[pos])
+        ax.xaxis.set_major_formatter(self.__date_format())
+        ax.xaxis.set_major_locator(mdates.DayLocator())
         ax.title.set_text(title)
         func(ax)
         
     def plot(self):
-
-        self.__plot((0,0), 'Expected concentration vs real concentration (per m3) currently in system', self.__plot_dust_model_raw_area)
-        self.__plot((1,0), 'Difference in concentration', self.__plot_raw_difference)
-        # self.__plot((1,0), 'Difference in accumulated total concentration', self.__plot_difference_modelcumsum_dust)
+        actual_i = 0
+        for i, graph in enumerate(self.graph_def):
+            if i in self.graphs:
+                pos = (math.floor(actual_i / 2), actual_i % 2)
+                self.__plot(pos, graph['title'], graph['f'])
+                actual_i += 1
 
         self.__write_results()
 
@@ -278,12 +312,11 @@ class Analyse:
         #     'Raw measurements against cumulative sum of raw model')
         # ax3 = self.__plot_derivatives(fig, grid,
         #     'Derivatives of raw measurements and raw model')
-        # ax4 = self.__write_results()
         # ax5 = self.__plot_difference_modelcumsum_dust(fig, grid,
         #     'Difference between cumulative model and raw measurements')
 
         # uncomment to store results in a file
-        # fig.savefig("results.pdf", bbox_inches='tight')
+        # self.fig.savefig("results.pdf", bbox_inches='tight')
         self.fig.tight_layout()
 
         plt.show()

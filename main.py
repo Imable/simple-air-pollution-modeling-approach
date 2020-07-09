@@ -23,5 +23,6 @@ if __name__ == "__main__":
         conf['pm_type'],
         conf['station'],
         conf['weather_plot'],
-        conf['base_concentration']
+        conf['base_concentration'],
+        conf['graphs']
     )
