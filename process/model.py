@@ -27,7 +27,7 @@ class Model:
         self.active_sources = SourceFactory.get_initial_sources(debug)
 
         self.layers  = Layers(inversion_layer)
-        self.results = ResultWriter(pm_type)
+        self.results = ResultWriter(step, pm_type)
         
     def __remove_old_sources(self):
         # Only keep sources that have not been removed

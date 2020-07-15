@@ -96,21 +96,13 @@ class Analyse:
     def __get_grid(self):
         return gridspec.GridSpec(math.ceil(len(self.graphs)/2), 1 if len(self.graphs) < 2 else 2)
     
-    # def __inject_base_concentration_and_cumsum(self):
-    #     results = self.results.copy()
-    #     results.iloc[0, results.columns.get_loc(self.model_col_name)] += self.base_concentration
-    #     results[self.model_col_name] = results[self.model_col_name].cumsum()
-    #     results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
-
-    #     return results
-    
     def __raw_area(self):
         results = self.results.copy()
 
-        self.export['Values of non-accumulated sum'] = results[self.model_col_name]
+        self.export['Values of non-accumulated sum'] = self.results[self.model_col_name]
 
         results.iloc[0, results.columns.get_loc(self.model_col_name)] += (self.base_concentration * 2)
-        results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
+        results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist()))
         return results
     
     def __date_format(self):
@@ -220,14 +212,14 @@ class Analyse:
     def __plot_difference_modelcumsum_dust(self, ax):
         tmp = self.dust_data.copy()
         # From expected concentration per hour to expected concentration from start_ts until now
-        tmp[self.model_col_name] = self.results_with_base_raw_cumarea.reset_index()[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
+        tmp[self.model_col_name] = self.results_with_base_raw_cumarea.reset_index()[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist()))
         diff_columns = []
 
         for column in self.columns:
             diff_column = f'diff_{column}'
             diff_columns.append(diff_column)
             # From expected concentration per hour to expected concentration from start_ts until now
-            tmp[column] = tmp[column].expanding().apply(lambda x: numpy.trapz(x.tolist(), dx=self.step.total_seconds()/3600))
+            tmp[column] = tmp[column].expanding().apply(lambda x: numpy.trapz(x.tolist()))
             tmp[diff_column] = tmp[self.model_col_name] - tmp[column]
         
         tmp.plot(
@@ -235,7 +227,7 @@ class Analyse:
             y=diff_columns, 
             ax=ax,
             x_compat=True)
-        ax.set_ylabel(f'{self.pm_type} in \u03BCg/m3')
+        ax.set_ylabel(f'\u2211 O to N of \u222B of y in {self.pm_type} in \u03BCg/m3')
 
         self.__add_optional_weater_plot(ax)
 
@@ -262,12 +254,12 @@ class Analyse:
         
     
     def __write_results(self):
-        area_model = numpy.trapz(self.results_with_base_raw_cumarea[self.model_col_name].tolist(), dx=self.step.total_seconds()/3600)
+        area_model = numpy.trapz(self.results_with_base_raw_cumarea[self.model_col_name].tolist())
 
         area_values = {}
         for column in self.columns:
             if column != 'DATE':
-                area_measurement = numpy.trapz(self.dust_data[column].tolist(), dx=self.step.total_seconds()/3600)
+                area_measurement = numpy.trapz(self.dust_data[column].tolist())
                 area_values[column] = area_measurement
 
         print(f'Cumulative concentration in volume: {area_model} \u03BCg/m3')
@@ -286,8 +278,8 @@ class Analyse:
     
     def __plot(self, pos, title, func):
         ax = self.fig.add_subplot(self.grid[pos])
-        ax.xaxis.set_major_formatter(self.__date_format())
-        ax.xaxis.set_major_locator(mdates.DayLocator())
+        # ax.xaxis.set_major_formatter(self.__date_format())
+        # ax.xaxis.set_major_locator(mdates.DayLocator())
         ax.title.set_text(title)
         func(ax)
         

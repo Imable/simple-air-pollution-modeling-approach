@@ -25,14 +25,14 @@ class MeasurementsReader(Reader):
         df.index = df.index.map(lambda x: x.replace(second=0, microsecond=0))
 
         # Multiply PM measurements from sheet by 1000 to achieve the same unit as the model (microgram/m3)
-        for column in self.columns:
-            if self.pm_type in column:
-                df[column] *= 1000
+        # for column in self.columns:
+        #     if self.pm_type in column:
+        #         df[column] *= 1000
         
         # Only select relevant columns
         df = df[self.columns]
 
-        df = df.resample(self.step).interpolate()
+        # df = df.resample(self.step).interpolate()
 
         return df
 
