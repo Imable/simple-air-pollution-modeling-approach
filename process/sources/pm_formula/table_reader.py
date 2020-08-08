@@ -15,6 +15,12 @@ class TableReader:
         return f'{ BASE_PATH }/{ FNAME }'
          
     def fetch_row(self, ship_name):
-        return self.data.loc[self.data['NAME'] == 'Hurtigruten'].squeeze()
+        row = self.data.loc[self.data['NAME'] == ship_name]
+
+        if row.empty:
+            print(f'No engine data available for {ship_name}!')
+            raise ValueError(f'No engine data available for {ship_name}')
+
+        return self.data.loc[self.data['NAME'] == ship_name].squeeze()
 
 table_reader = TableReader()
