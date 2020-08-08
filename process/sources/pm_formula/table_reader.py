@@ -21,6 +21,6 @@ class TableReader:
             print(f'No engine data available for {ship_name}!')
             raise ValueError(f'No engine data available for {ship_name}')
 
-        return self.data.loc[self.data['NAME'] == ship_name].squeeze()
+        return row.squeeze()
 
 table_reader = TableReader()
