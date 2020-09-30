@@ -47,12 +47,18 @@ class Model:
 
     def __combine_emissions(self, cur_ts, step):
         emissions = 0
+        names     = []
 
         for source in self.active_sources:
             source.update(step, cur_ts, cur_ts+step)
             emissions += source.gather_emissions(cur_ts)
 
-        return emissions
+            # Gather the names of the sources contributing to these emissions
+            # 'if' in order to not add ships when they don't emit anything (e.g. ferry)
+            if emissions > 0:
+                names.append(source.name)
+
+        return emissions, names
     
     def __calculate_concentration(self, emissions):
         volume = self.layers.get_current_volume()
@@ -73,7 +79,10 @@ class Model:
     def iteration(self, cur_ts, step):
         self.__remove_old_sources()
         self.__update_sources(cur_ts)
-        emissions     = self.__combine_emissions(cur_ts, step)
-        concentration = self.__calculate_concentration(emissions)
+        emissions, names = self.__combine_emissions(cur_ts, step)
+        concentration    = self.__calculate_concentration(emissions)
 
-        self.results.append(cur_ts, concentration)
+        self.results.append_emissions(cur_ts, concentration, names)
+
+        # Store the name of sources contributing to this timesteps' emissions
+        # self.results.append_contributors(cur_ts, names)
