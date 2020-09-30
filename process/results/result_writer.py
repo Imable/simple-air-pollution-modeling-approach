@@ -7,24 +7,28 @@ class ResultWriter:
         self.pm_type = pm_type
 
         # Format = {'datetime': [pm_value] }
-        self.emissions = {}
+        self.emissions    = {}
+        # self.contributors = {}
     
-    def append(self, cur_ts, result):
-        self.emissions[cur_ts] = [result]
+    def append_emissions(self, cur_ts, result, contributors):
+        self.emissions[cur_ts] = ([result], contributors)
+    
+    # def append_contributors(self, cur_ts, contributors):
+    #     self.contributors[cur_ts] = contributors
     
     def get(self):
         new_emissions = {}
 
         # Concatenate per hour to match the resolution of the measurements
-        for date, value in self.emissions.items():
+        for date, (value, contributors) in self.emissions.items():
             key = date.replace(minute=0, second=0)
 
             if key in new_emissions:
-                new_emissions[key] += sum(value)
+                new_emissions[key] = (new_emissions[key][0] + sum(value), new_emissions[key][1] + contributors)
             else:
-                new_emissions[key] = sum(value)
+                new_emissions[key] = (sum(value), contributors)
 
         return pandas.DataFrame.from_dict(
             new_emissions, 
             orient='index',
-            columns=[f'MODEL_{self.pm_type}'])
+            columns=[f'MODEL_{self.pm_type}', 'CONTRIBUTORS'])

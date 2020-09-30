@@ -99,7 +99,8 @@ class Analyse:
     def __raw_area(self):
         results = self.results.copy()
 
-        self.export['Values of non-accumulated sum'] = self.results[self.model_col_name]
+        # self.export['Values of non-accumulated sum'] = self.results[self.model_col_name]
+        self.export['Values of non-accumulated sum'] = self.results
 
         results.iloc[0, results.columns.get_loc(self.model_col_name)] += (self.base_concentration * 2)
         results[self.model_col_name] = results[self.model_col_name].expanding().apply(lambda x: numpy.trapz(x.tolist()))
