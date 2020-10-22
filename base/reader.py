@@ -21,8 +21,9 @@ class Reader:
         if mask:
             # Remove the rows that precede the timeframe
             self.data = self.data.loc[start_ts:end_ts]
-            
 
+        self.max_row = len(self.data.index)
+        
 
     def __get_path(self, fname):
         return f'{ BASE_PATH }/{ fname }'
