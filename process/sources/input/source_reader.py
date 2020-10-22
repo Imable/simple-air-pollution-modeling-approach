@@ -28,7 +28,8 @@ class SourceReader(Reader):
         cur_row = self.get_row_at(local_pointer)
 
         # Find the next rows that have the same date as `cur_date`
-        while cur_row.DATE.dt.date.item() == cur_date:
+
+        while isinstance(cur_row, pandas.DataFrame) and cur_row.DATE.dt.date.item() == cur_date:
 
             # Add if the start of the manouvering falls in this timestep
             if cur_row.ETA.item()-MANOUVERING_TIME >= cur_ts and cur_row.ETA.item()-MANOUVERING_TIME < cur_step_end:
@@ -55,7 +56,10 @@ class SourceReader(Reader):
                 )
             
             local_pointer += 1
-            cur_row = self.get_row_at(local_pointer)
+
+            cur_row = None
+            if local_pointer < self.max_row:
+                cur_row = self.get_row_at(local_pointer)
         
         if debug:
             self.__print_alterations(added, removed)
@@ -88,9 +92,12 @@ class SourceReader(Reader):
         df = df.dropna(subset=['ETA'])
         df = df.dropna(subset=['ETD'])
 
+        print(self.data)
         # Add the date to times in order to cope with a timestep bigger than 1 day
         df['ETA'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETA'].time()), 1)
         df['ETD'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETD'].time()), 1)
+        print(self.data)
+
 
         # Guarantee sorting on date column
         df = df.sort_values(by=['DATE'])
