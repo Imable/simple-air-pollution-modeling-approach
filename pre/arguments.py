@@ -18,12 +18,12 @@ ARGUMENTS = {
     'step': {
         'help': 'Step size for the model interval in minutes (M)',
         'parse': (lambda x: timedelta(minutes=int(x))),
-        'default': '60'
+        'default': '20'
     },
     'inversion_layer': {
         'help': 'Inversion layer height in meters (m)',
         'parse': (lambda x: int(x)),
-        'default': 500
+        'default': 1800
     },
     'source_data': {
         'help': 'Filename of the .xlsx file containing source data',
@@ -38,7 +38,7 @@ ARGUMENTS = {
     'pm_type': {
         'help': 'Type of PM that will be modelled',
         'parse': (lambda x: x),
-        'default': 'PM1'
+        'default': 'PM2.5'
     },
     'station': {
         'help': 'Station of which the measurements will be plotted (G/C/D). Enter as: \'[\\"C\\", \\"D\\"]\'',

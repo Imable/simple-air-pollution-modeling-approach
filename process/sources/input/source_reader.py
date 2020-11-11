@@ -7,7 +7,7 @@ sys.path.append("....")
 from base.reader import Reader
 from ..source.ship.ship import Ship
 
-MANOUVERING_TIME = timedelta(minutes=30)
+MANOUVERING_TIME = timedelta(minutes=20)
 
 class SourceReader(Reader):
 
