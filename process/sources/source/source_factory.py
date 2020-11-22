@@ -108,7 +108,7 @@ class SourceFactory:
                         '10:35',
                         '13:35',
                         '16:35' # It's actually not departing here, but the morning after...
-                    ]
+                    ],
                     # What we originally had for 2016
                     # ('01-05-2016', '11-08-2016'): [
                     #     '6:35', # It's actually not arriving here, but the night before...
