@@ -47,13 +47,76 @@ class SourceFactory:
             # ),
             ScheduledShip(
                 {
-                    ('01-05-2016', '11-08-2016'): [
-                        '6:35', # It's actually not arriving here, but the night before...
-                        '9:35',
-                        '12:35',
-                        '15:35',
-                        '18:35' # It's actually not departing here, but the nmorning after...
+                    ('01-05-2015', '31-05-2015'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '10:35',
+                        '13:35',
+                        '16:35',
+                        '19:35' # It's actually not departing here, but the morning after...
                     ],
+                    ('01-06-2015', '31-08-2015'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '9:05',
+                        '10:35',
+                        '12:05',
+                        '13:35',
+                        '15:05',
+                        '16:35',
+                        '18:05',
+                        '19:35' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-09-2015', '30-09-2015'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '10:35',
+                        '13:35',
+                        '16:35',
+                        '19:35' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-10-2015', '31-10-2015'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '10:35',
+                        '13:35',
+                        '16:35' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-05-2016', '31-05-2016'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '10:35',
+                        '13:35',
+                        '16:35',
+                        '19:35' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-06-2016', '31-08-2016'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '9:05',
+                        '10:35',
+                        '12:05',
+                        '13:35',
+                        '15:05',
+                        '16:35',
+                        '18:05',
+                        '19:35' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-09-2016', '30-09-2016'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '10:35',
+                        '13:35',
+                        '16:35',
+                        '19:35' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-10-2016', '31-10-2016'): [
+                        '7:35', # It's actually not arriving here, but the night before...
+                        '10:35',
+                        '13:35',
+                        '16:35' # It's actually not departing here, but the morning after...
+                    ]
+                    # What we originally had for 2016
+                    # ('01-05-2016', '11-08-2016'): [
+                    #     '6:35', # It's actually not arriving here, but the night before...
+                    #     '9:35',
+                    #     '12:35',
+                    #     '15:35',
+                    #     '18:35' # It's actually not departing here, but the nmorning after...
+                    # ],
                     ('01-05-2017', '31-05-2017'): [
                         '7:35', # It's actually not arriving here, but the night before...
                         '10:35',
