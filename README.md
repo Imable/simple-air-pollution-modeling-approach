@@ -1,5 +1,7 @@
 # SAPMA: Simple Air Pollution Modelling Approach
 
+SAPMA is a air pollution modelling program that estimates the amount of PM in the air at a given moment depending on a cruise ship timetable. Currently, SAPMA is only applicable to the Geiranger fjord, Norway, since the landscape matches the presumptions made in this program and the volume of the valley has been tuned to fit the Geiranger fjord. This application is being used in active research 
+
 ## Prerequisites
 - Python 3.8(.1) installed on your system.
     - Other version should also work, but this requires changing the Python version in the Pipfile in the root of the project.
