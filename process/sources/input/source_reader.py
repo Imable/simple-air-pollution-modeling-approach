@@ -16,7 +16,7 @@ class SourceReader(Reader):
         super().__init__(*args, **kwargs)
       
     def __set_pointer(self, cur_date):
-        while self.get_row_at(self.pointer).DATE.dt.date.item() < cur_date:
+        while self.row_is_not_last_row(self.pointer) and self.get_row_at(self.pointer).DATE.dt.date.item() < cur_date:
             self.pointer += 1
     
     def __get_altered_sources(self, cur_ts, cur_date, cur_step_end, debug):

@@ -28,5 +28,11 @@ class Reader:
     def __get_path(self, fname):
         return f'{ BASE_PATH }/{ fname }'
      
+    def row_is_not_last_row(self, position):
+        '''
+        Check if we already reached the end of the file
+        '''
+        return position < len(self.data.index) - 1
+
     def get_row_at(self, position):
         return self.data.iloc[[position]]
