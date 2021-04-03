@@ -28,6 +28,9 @@ class ResultWriter:
             else:
                 new_emissions[key] = (sum(value), contributors)
 
+            # Remove duplicate contributors
+            new_emissions[key] = (new_emissions[key][0], list(set(new_emissions[key][1])))
+
         return pandas.DataFrame.from_dict(
             new_emissions, 
             orient='index',

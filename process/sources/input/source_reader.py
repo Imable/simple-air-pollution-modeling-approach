@@ -58,7 +58,7 @@ class SourceReader(Reader):
             local_pointer += 1
 
             cur_row = None
-            if local_pointer < self.max_row:
+            if local_pointer <= self.max_row:
                 cur_row = self.get_row_at(local_pointer)
         
         if debug:
@@ -83,7 +83,7 @@ class SourceReader(Reader):
         total_rows = len(df.index)
 
         # Parse the date and time columns to the datetime format
-        df['DATE'] = pandas.to_datetime(df['DATE'], errors='coerce')
+        df['DATE'] = pandas.to_datetime(df['DATE'], format='%d.%m.%Y', errors='coerce')
         df['ETA']  = pandas.to_datetime(df['ETA'], format='%H:%M', errors='coerce')
         df['ETD']  = pandas.to_datetime(df['ETD'], format='%H:%M', errors='coerce')
     
@@ -92,16 +92,14 @@ class SourceReader(Reader):
         df = df.dropna(subset=['ETA'])
         df = df.dropna(subset=['ETD'])
 
-        print(self.data)
         # Add the date to times in order to cope with a timestep bigger than 1 day
         df['ETA'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETA'].time()), 1)
         df['ETD'] = df.apply(lambda r : datetime.combine(r['DATE'], r['ETD'].time()), 1)
-        print(self.data)
-
 
         # Guarantee sorting on date column
+        # Somehow buggy, let's just assume the correct date order
         df = df.sort_values(by=['DATE'])
-        
+
         # Count omitted rows
         new_total_rows = len(df.index)
         omitted_rows = new_total_rows - total_rows
