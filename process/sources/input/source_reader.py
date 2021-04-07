@@ -58,7 +58,7 @@ class SourceReader(Reader):
             local_pointer += 1
 
             cur_row = None
-            if local_pointer <= self.max_row:
+            if self.row_is_not_last_row(local_pointer):
                 cur_row = self.get_row_at(local_pointer)
         
         if debug:
