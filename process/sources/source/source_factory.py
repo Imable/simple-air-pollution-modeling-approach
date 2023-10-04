@@ -229,6 +229,61 @@ class SourceFactory:
                         '15:25',
                         '18:25' # It's actually not departing here, but the morning after...
                     ],
+                    ('12-05-2021', '30-09-2021'): [
+                        '6:25', # It's actually not arriving here, but the night before...
+                        '9:25',
+                        '12:25',
+                        '15:25',
+                        '18:25' # It's actually not departing here, but the morning after...
+                    ],
+                    ('27-09-2021', '17-10-2021'): [
+                        '7:55', # It's actually not arriving here, but the night before...
+                        '10:55',
+                        '11:25',
+                        '14:25',
+                        '17:25' # It's actually not departing here, but the morning after...
+                    ],
+                    ('03-01-2022', '30-04-2022'): [
+                        '9:25', # It's actually not arriving here, but the night before...
+                        '15:40',
+                    ],
+                    ('01-05-2022', '30-06-2022'): [
+                        '6:25', # It's actually not arriving here, but the night before...
+                        '9:25',
+                        '12:25',
+                        '15:25',
+                        '18:25' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-07-2022', '15-08-2022'): [
+                        '6:25', # It's actually not arriving here, but the night before...
+                        '7:55',
+                        '9:25',
+                        '10:55',
+                        '12:25',
+                        '13:55',
+                        '15:25',
+                        '16:55',
+                        '18:25' # It's actually not departing here, but the morning after...
+                    ],
+                    ('16-08-2022', '30-09-2022'): [
+                        '6:25', # It's actually not arriving here, but the night before...
+                        '9:25',
+                        '12:25',
+                        '15:25',
+                        '18:25' # It's actually not departing here, but the morning after...
+                    ],
+                     ('01-10-2022', '31-10-2022'): [
+                        '7:55', # It's actually not arriving here, but the night before...
+                        '10:55',
+                        '11:25',
+                        '14:25',
+                        '17:25' # It's actually not departing here, but the morning after...
+                    ],
+                    ('01-11-2022', '30-04-2023'): [
+                        '9:25', # It's actually not arriving here, but the night before...
+                        '15:40',
+                    ],
+                    
                 },
               timedelta(minutes=25), # Harbour time
               datetime.now(),
